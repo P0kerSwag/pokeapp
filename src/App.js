@@ -1,23 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useEffect, useState} from 'react'
+const App = () => {
+  const [allPokemons, setAllPokemons] = useState([])
+  const [loadMore, setLoadMore] =useState ('https://pokeapi.co/api/v2/pokemon?limit=20')
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+  const getAllPokemons = async()=>{
+    const res =await fetch(loadMore)
+    const data = res.json()
+    setLoadMore(data.next)
+    console.log(data)
+
+    function createPokemonObject(result){
+      result.array.forEach(async (pokemon) => {
+        const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.name}`)
+        const data = res.json()
+
+        setAllPokemons(currentList =>[...currentList,data])
+      });
+
+    }
+    createPokemonObject(data.result)
+    await console.log(allPokemons)
+  }
+
+  useEffect(()=>{
+    getAllPokemons()
+  },[])
+
+  return(
+    <div className="app-content">
+      <h1>Pokemon Evolution</h1>
+      <div className='pokemon-container'>
+        <div className='all-container'>
+
+
+        </div>
+        <button className='load-more'>Load More</button>
+      </div>
     </div>
   );
 }
